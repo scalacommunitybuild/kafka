@@ -23,6 +23,7 @@ import org.apache.kafka.common.security.auth.{KafkaPrincipal, SecurityProtocol}
 import org.apache.kafka.common.utils.Sanitizer
 import org.junit.{After, Before}
 
+
 class UserQuotaTest extends BaseQuotaTest with SaslSetup {
 
   override protected def securityProtocol = SecurityProtocol.SASL_SSL

@@ -25,10 +25,11 @@ import org.apache.kafka.common.resource.{PatternType, ResourcePattern, ResourceT
 import org.apache.kafka.common.security.auth.{KafkaPrincipal, SecurityProtocol}
 import org.apache.kafka.common.utils.Utils
 import org.junit.Assert.assertEquals
-import org.junit.{After, Before, Test}
+import org.junit.{After, Before, Ignore, Test}
 
 import scala.collection.JavaConverters._
 
+@Ignore
 class DescribeAuthorizedOperationsTest extends IntegrationTestHarness with SaslSetup {
   override val brokerCount = 1
   this.serverConfig.setProperty(KafkaConfig.ZkEnableSecureAclsProp, "true")

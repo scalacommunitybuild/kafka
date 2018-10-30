@@ -31,7 +31,8 @@ import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertTrue}
 
 import scala.collection.JavaConverters._
 
-class AbstractCreateTopicsRequestTest extends BaseRequestTest {
+// made abstract by @ennru as JUnit complained "No runnable methods"
+abstract class AbstractCreateTopicsRequestTest extends BaseRequestTest {
 
   override def brokerPropertyOverrides(properties: Properties): Unit =
     properties.put(KafkaConfig.AutoCreateTopicsEnableProp, false.toString)

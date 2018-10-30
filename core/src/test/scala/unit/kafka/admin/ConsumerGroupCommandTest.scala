@@ -35,7 +35,8 @@ import org.junit.{After, Before}
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-class ConsumerGroupCommandTest extends KafkaServerTestHarness {
+// made abstract by @ennru as JUnit complained "No runnable methods"
+abstract class ConsumerGroupCommandTest extends KafkaServerTestHarness {
   import ConsumerGroupCommandTest._
 
   val topic = "foo"

@@ -6,16 +6,18 @@ val version_activation = "1.1.1"
 val version_apacheda = "1.0.2"
 val version_apacheds = "2.0.0-M24"
 val version_argparse4j = "0.7.0"
-val version_bcpkix = "1.61"
+val version_bcpkix = "1.62"
 val version_checkstyle = "8.20"
+val version_commonsCli = "1.4"
 val version_gradle = "5.4.1"
 val version_gradleVersionsPlugin = "0.21.0"
 val version_grgit = "3.1.1"
-val version_httpclient = "4.5.8"
+val version_httpclient = "4.5.9"
 val version_easymock = "4.0.2"
 val version_jackson = "2.9.9"
+val version_jacksonDatabind = "2.9.9.3"
 val version_jacoco = "0.8.3"
-val version_jetty = "9.4.18.v20190429"
+val version_jetty = "9.4.19.v20190610"
 val version_jersey = "2.28"
 val version_jmh = "1.21"
 val version_hamcrest = "2.1"
@@ -34,30 +36,29 @@ val version_kafka_10 = "1.0.2"
 val version_kafka_11 = "1.1.1"
 val version_kafka_20 = "2.0.1"
 val version_kafka_21 = "2.1.1"
-val version_kafka_22 = "2.2.0"
+val version_kafka_22 = "2.2.1"
 val version_lz4 = "1.6.0"
 val version_mavenArtifact = "3.6.1"
 val version_metrics = "2.2.0"
-val version_mockito = "2.27.0"
-val version_owaspDepCheckPlugin = "4.0.2"
+val version_mockito = "3.0.0"
+val version_owaspDepCheckPlugin = "5.2.1"
 val version_powermock = "2.0.2"
 val version_reflections = "0.9.11"
 val version_rocksDB = "5.18.3"
-val version_scalaCollectionCompat = "2.1.0"
+val version_scalaCollectionCompat = "2.1.2"
 val version_scalafmt = "1.5.1"
 val version_scalaJava8Compat = "0.9.0"
 val version_scalatest = "3.0.8"
 val version_scoverage = "1.4.0"
 val version_scoveragePlugin = "2.5.0"
 val version_shadowPlugin = "4.0.4"
-val version_slf4j = "1.7.26"
+val version_slf4j = "1.7.27"
 val version_snappy = "1.1.7.3"
 val version_spotbugs = "3.1.12"
 val version_spotbugsPlugin = "1.6.9"
-val version_spotlessPlugin = "3.23.0"
-val version_zkclient = "0.11"
-val version_zookeeper = "3.4.14"
-val version_zstd = "1.4.0-1"
+val version_spotlessPlugin = "3.23.1"
+val version_zookeeper = "3.5.5"
+val version_zstd = "1.4.2-1"
 
 lazy val kafka = project
   .in(file("."))
@@ -183,7 +184,7 @@ lazy val core = project
      */
       ,
     libraryDependencies ++= Seq(
-      "com.fasterxml.jackson.core" % "jackson-databind" % version_jackson,
+      "com.fasterxml.jackson.core" % "jackson-databind" % version_jacksonDatabind,
       "com.fasterxml.jackson.module" %% "jackson-module-scala" % version_jackson,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-csv" % version_jackson,
       "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % version_jackson,
@@ -194,12 +195,12 @@ lazy val core = project
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "com.typesafe.scala-logging" %% "scala-logging" % version_scalaLogging,
       "org.slf4j" % "slf4j-api" % version_slf4j,
-      "com.101tec" % "zkclient" % version_zkclient exclude ("org.apache.zookeeper", "zookeeper"),
       "org.apache.zookeeper" % "zookeeper" % version_zookeeper excludeAll (
         ExclusionRule("org.slf4j", "slf4j-log4j12"),
         ExclusionRule("log4j", "log4j"),
         ExclusionRule("io.netty", "netty")
       ),
+      "commons-cli" % "commons-cli" % version_commonsCli,
       "log4j" % "log4j" % version_log4j,
 
       "org.bouncycastle" % "bcpkix-jdk15on" % version_bcpkix % Test,

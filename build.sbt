@@ -1,5 +1,5 @@
 
-ThisBuild / scalaVersion := "2.12.8"
+ThisBuild / scalaVersion := "2.12.9"
 
 // from gradle/dependencies.gradle
 val version_activation = "1.1.1"
@@ -152,6 +152,7 @@ lazy val core = project
     Test / unmanagedSources / excludeFilter := HiddenFileFilter
       || "AddPartitionsTest.scala"
       || "AddPartitionsToTxnRequestTest.scala"
+      || "ConsumerBounceTest.scala"
       || "DeleteTopicsRequestWithDeletionDisabledTest.scala"
       || "DescribeLogDirsRequestTest.scala"
       || "DynamicConnectionQuotaTest.scala"
@@ -164,8 +165,6 @@ lazy val core = project
       || "LogOffsetTest.scala"
       || "MultipleListenersWithDefaultJaasContextTest.scala"
       || "MultipleListenersWithAdditionalJaasContextTest.scala"
-      || "ResetIntegrationTest.java"
-      || "ResetIntegrationWithSslTest.java"
       || "RequestQuotaTest.scala"
       || "SaslApiVersionsRequestTest.scala"
       || "SaslGssapiSslEndToEndAuthorizationTest.scala"
@@ -235,6 +234,13 @@ lazy val streams = project
   )
   .settings(
     Test / unmanagedSourceDirectories += baseDirectory.value / "test-utils" / "src" /  "main" / "java",
+    Test / unmanagedSources / excludeFilter := HiddenFileFilter
+      || "InMemoryKeyValueStoreTest.java"
+      || "ResetIntegrationTest"
+      || "ResetIntegrationWithSslTest.java"
+      || "StreamStreamJoinIntegrationTest.java"
+      || "StreamTableJoinIntegrationTest.java"
+      || "TableTableJoinIntegrationTest.java",
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % version_slf4j,
       "org.rocksdb" % "rocksdbjni" % version_rocksDB,

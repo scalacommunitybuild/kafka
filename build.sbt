@@ -154,25 +154,31 @@ lazy val core = project
       || "AddPartitionsTest.scala"
       || "AddPartitionsToTxnRequestTest.scala"
       || "ConsumerBounceTest.scala"
+      || "ConsumerPerformanceTest.scala"
       || "DeleteTopicsRequestWithDeletionDisabledTest.scala"
       || "DescribeLogDirsRequestTest.scala"
       || "DynamicConnectionQuotaTest.scala"
       || "EdgeCaseRequestTest.scala"
       || "FetchRequestDownConversionConfigTest.scala"
       || "GroupAuthorizerIntegrationTest.scala"
+      || "GroupEndToEndAuthorizationTest.scala"
       || "GssapiAuthenticationTest.scala"
       || "KafkaMetricReporterExceptionHandlingTest.scala"
       || "ListOffsetsRequestTest.scala"
       || "LogOffsetTest.scala"
       || "MultipleListenersWithDefaultJaasContextTest.scala"
       || "MultipleListenersWithAdditionalJaasContextTest.scala"
+      || "ReassignPartitionsClusterTest.scala"
       || "RequestQuotaTest.scala"
       || "SaslApiVersionsRequestTest.scala"
       || "SaslGssapiSslEndToEndAuthorizationTest.scala"
       || "SaslMultiMechanismConsumerTest.scala"
       || "SaslPlaintextConsumerTest.scala"
+      || "SaslPlainSslEndToEndAuthorizationTest.scala"
       || "SaslSslAdminClientIntegrationTest.scala"
       || "SaslSslConsumerTest.scala"
+      || "SimpleAclAuthorizerTest.scala"
+      || "SocketServerTest.scala"
       || "StreamTableJoinIntegrationTest.java"
       || "TransactionsBounceTest.scala"
       || "UserQuotaTest.scala"
@@ -208,7 +214,11 @@ lazy val core = project
       "org.easymock" % "easymock" % version_easymock % Test,
       "org.apache.directory.api" % "api-all" % version_apacheda % Test excludeAll (
         ExclusionRule("xml-apis", "xml-apis"),
-        ExclusionRule("org.apache.mina", "mina-core")
+        ExclusionRule("org.apache.mina", "mina-core"),
+        // From build.gradle
+        // To prevent a UniqueResourceException due the same resource existing in both
+        // org.apache.directory.api/api-all and org.apache.directory.api/api-ldap-schema-data
+        ExclusionRule("org.apache.directory.api", "api-ldap-schema-data")
       ),
       "org.apache.directory.server" % "apacheds-core-api" % version_apacheds % Test,
       "org.apache.directory.server" % "apacheds-interceptor-kerberos" % version_apacheds % Test,
@@ -236,8 +246,10 @@ lazy val streams = project
   .settings(
     Test / unmanagedSourceDirectories += baseDirectory.value / "test-utils" / "src" /  "main" / "java",
     Test / unmanagedSources / excludeFilter := HiddenFileFilter
+      || "EosIntegrationTest.java"
       || "InMemoryKeyValueStoreTest.java"
-      || "ResetIntegrationTest"
+      || "KStreamAggregationIntegrationTest.java"
+      || "ResetIntegrationTest.java"
       || "ResetIntegrationWithSslTest.java"
       || "StreamStreamJoinIntegrationTest.java"
       || "StreamTableJoinIntegrationTest.java"

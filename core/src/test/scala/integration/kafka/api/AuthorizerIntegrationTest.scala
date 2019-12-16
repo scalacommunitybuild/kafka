@@ -53,7 +53,7 @@ import org.apache.kafka.common.security.auth.{KafkaPrincipal, SecurityProtocol}
 import org.apache.kafka.common.{ElectionType, IsolationLevel, KafkaException, Node, TopicPartition, requests}
 import org.apache.kafka.test.{TestUtils => JTestUtils}
 import org.junit.Assert._
-import org.junit.{After, Assert, Before, Test}
+import org.junit.{After, Assert, Before, Ignore, Test}
 import org.scalatest.Assertions.intercept
 
 import scala.collection.JavaConverters._

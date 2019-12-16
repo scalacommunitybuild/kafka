@@ -1,23 +1,22 @@
 
-ThisBuild / scalaVersion := "2.12.9"
+ThisBuild / scalaVersion := "2.12.10"
 
 // from gradle/dependencies.gradle
 val version_activation = "1.1.1"
 val version_apacheda = "1.0.2"
 val version_apacheds = "2.0.0-M24"
 val version_argparse4j = "0.7.0"
-val version_bcpkix = "1.62"
+val version_bcpkix = "1.63"
 val version_checkstyle = "8.20"
 val version_commonsCli = "1.4"
-val version_gradle = "5.4.1"
+val version_gradle = "5.6.2"
 val version_gradleVersionsPlugin = "0.21.0"
 val version_grgit = "3.1.1"
 val version_httpclient = "4.5.9"
 val version_easymock = "4.0.2"
-val version_jackson = "2.9.9"
-val version_jacksonDatabind = "2.9.9.3"
+val version_jackson = "2.10.0"
 val version_jacoco = "0.8.3"
-val version_jetty = "9.4.19.v20190610"
+val version_jetty = "9.4.20.v20190813"
 val version_jersey = "2.28"
 val version_jmh = "1.21"
 val version_hamcrest = "2.1"
@@ -36,7 +35,8 @@ val version_kafka_10 = "1.0.2"
 val version_kafka_11 = "1.1.1"
 val version_kafka_20 = "2.0.1"
 val version_kafka_21 = "2.1.1"
-val version_kafka_22 = "2.2.1"
+val version_kafka_22 = "2.2.2"
+val version_kafka_23 = "2.3.1"
 val version_lz4 = "1.6.0"
 val version_mavenArtifact = "3.6.1"
 val version_metrics = "2.2.0"
@@ -47,23 +47,27 @@ val version_reflections = "0.9.11"
 val version_rocksDB = "5.18.3"
 val version_scalaCollectionCompat = "2.1.2"
 val version_scalafmt = "1.5.1"
-val version_scalaJava8Compat = "0.9.0"
+val version_scalaJava8Compat  = "0.9.0"
 val version_scalatest = "3.0.8"
 val version_scoverage = "1.4.0"
 val version_scoveragePlugin = "2.5.0"
 val version_shadowPlugin = "4.0.4"
-val version_slf4j = "1.7.27"
+val version_slf4j = "1.7.28"
 val version_snappy = "1.1.7.3"
 val version_spotbugs = "3.1.12"
 val version_spotbugsPlugin = "1.6.9"
 val version_spotlessPlugin = "3.23.1"
-val version_zookeeper = "3.5.5"
-val version_zstd = "1.4.2-1"
+val version_zookeeper = "3.5.6"
+val version_zstd = "1.4.3-1"
 
 lazy val kafka = project
   .in(file("."))
   .aggregate(
-    core
+    generator,
+    clients,
+    core,
+    streams,
+    `streams-scala`
   )
 
 val additionalScalacOptions = Seq(
@@ -111,9 +115,15 @@ lazy val clients = project
         "-Xlint:unsound-match"
       ) else Seq.empty
     },
+    // task processMessages(type:JavaExec) {
     sourceGenerators in Compile += Def.task {
-      (generator / Compile / run).toTask(" clients/src/generated/java/org/apache/kafka/common/message clients/src/main/resources/common/message/").value
+      (generator / Compile / run).toTask(" org.apache.kafka.common.message clients/src/generated/java/org/apache/kafka/common/message clients/src/main/resources/common/message").value
       file(baseDirectory.value.getAbsolutePath + "/src/generated/java/").globRecursive("*.java").get()
+    }.taskValue,
+    // task processTestMessages(type:JavaExec) {
+    sourceGenerators in Compile += Def.task {
+      (generator / Compile / run).toTask(" org.apache.kafka.common.message clients/src/generated-test/java/org/apache/kafka/common/message clients/src/test/resources/common/message").value
+      file(baseDirectory.value.getAbsolutePath + "/src/generated-test/java/").globRecursive("*.java").get()
     }.taskValue,
     libraryDependencies ++= Seq(
       "com.github.luben" % "zstd-jni" % version_zstd,
@@ -153,51 +163,43 @@ lazy val core = project
     Test / unmanagedSources / excludeFilter := HiddenFileFilter
       || "AddPartitionsTest.scala"
       || "AddPartitionsToTxnRequestTest.scala"
-      || "ConsumerBounceTest.scala"
-      || "ConsumerPerformanceTest.scala"
+      || "AuthorizerIntegrationTest.java"
       || "DeleteTopicsRequestWithDeletionDisabledTest.scala"
       || "DescribeLogDirsRequestTest.scala"
       || "DynamicConnectionQuotaTest.scala"
       || "EdgeCaseRequestTest.scala"
       || "FetchRequestDownConversionConfigTest.scala"
       || "GroupAuthorizerIntegrationTest.scala"
-      || "GroupEndToEndAuthorizationTest.scala"
       || "GssapiAuthenticationTest.scala"
       || "KafkaMetricReporterExceptionHandlingTest.scala"
       || "ListOffsetsRequestTest.scala"
       || "LogOffsetTest.scala"
       || "MultipleListenersWithDefaultJaasContextTest.scala"
       || "MultipleListenersWithAdditionalJaasContextTest.scala"
+      || "PlaintextAdminIntegrationTest.java"
+      || "PreferredReplicaLeaderElectionCommandTest.java"
       || "ReassignPartitionsClusterTest.scala"
       || "RequestQuotaTest.scala"
       || "SaslApiVersionsRequestTest.scala"
       || "SaslGssapiSslEndToEndAuthorizationTest.scala"
-      || "SaslMultiMechanismConsumerTest.scala"
       || "SaslPlaintextConsumerTest.scala"
-      || "SaslPlainSslEndToEndAuthorizationTest.scala"
-      || "SaslSslAdminClientIntegrationTest.scala"
+      || "SaslSslAdminIntegrationTest.java"
       || "SaslSslConsumerTest.scala"
-      || "SimpleAclAuthorizerTest.scala"
-      || "SocketServerTest.scala"
-      || "StreamTableJoinIntegrationTest.java"
-      || "TransactionsBounceTest.scala"
       || "UserQuotaTest.scala"
     /*
       Ignored via JUnit annotations:
-      AuthorizerIntegrationTest. ...
-      ConsumerBounceTest. ...
       EpochDrivenReplicationProtocolAcceptanceTest.offsetsShouldNotGoBackwards (which is excluded above?!)
      */
       ,
     libraryDependencies ++= Seq(
-      "com.fasterxml.jackson.core" % "jackson-databind" % version_jacksonDatabind,
+      "com.fasterxml.jackson.core" % "jackson-databind" % version_jackson,
       "com.fasterxml.jackson.module" %% "jackson-module-scala" % version_jackson,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-csv" % version_jackson,
       "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % version_jackson,
       "net.sf.jopt-simple" % "jopt-simple" % version_jopt,
       "com.yammer.metrics" % "metrics-core" % version_metrics,
-      "org.scala-lang.modules" %% "scala-java8-compat" % version_scalaJava8Compat,
       "org.scala-lang.modules" %% "scala-collection-compat" % version_scalaCollectionCompat,
+      "org.scala-lang.modules" %% "scala-java8-compat" % version_scalaJava8Compat,
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "com.typesafe.scala-logging" %% "scala-logging" % version_scalaLogging,
       "org.slf4j" % "slf4j-api" % version_slf4j,
@@ -233,8 +235,7 @@ lazy val core = project
       "org.slf4j" % "slf4j-log4j12" % version_slf4j % Test,
       "jfree" % "jfreechart" % version_jfreechart % Test,
       //
-      "com.novocode" % "junit-interface" % "0.11" % Test, // BSD-style
-//      "org.junit.jupiter" % "junit-jupiter-api" % JupiterKeys.junitJupiterVersion.value % Provided
+      "com.novocode" % "junit-interface" % "0.11" % Test // BSD-style
     )
   )
 
@@ -244,6 +245,12 @@ lazy val streams = project
     core % "compile->test;test->test"
   )
   .settings(
+    sourceGenerators in Compile += Def.task {
+      (generator / Compile / run).toTask(" org.apache.kafka.streams.internals.generated " +
+        "streams/src/generated/java/org/apache/kafka/streams/internals/generated " +
+        "streams/src/main/resources/common/message").value
+      file(baseDirectory.value.getAbsolutePath + "/src/generated/java/").globRecursive("*.java").get()
+    }.taskValue,
     Test / unmanagedSourceDirectories += baseDirectory.value / "test-utils" / "src" /  "main" / "java",
     Test / unmanagedSources / excludeFilter := HiddenFileFilter
       || "EosIntegrationTest.java"
@@ -251,9 +258,11 @@ lazy val streams = project
       || "KStreamAggregationIntegrationTest.java"
       || "ResetIntegrationTest.java"
       || "ResetIntegrationWithSslTest.java"
+      || "StoreUpgradeIntegrationTest.java"
       || "StreamStreamJoinIntegrationTest.java"
       || "StreamTableJoinIntegrationTest.java"
-      || "TableTableJoinIntegrationTest.java",
+      || "TableTableJoinIntegrationTest.java"
+      || "TaskMetricsTest.java",
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % version_slf4j,
       "org.rocksdb" % "rocksdbjni" % version_rocksDB,
